@@ -1,4 +1,5 @@
 const OrderModel = require('../model/orderModel');
+const UserModel = require('../model/userModel');
 const { uuidToInt } = require('./userController');
 
 class OrderController {
@@ -71,6 +72,26 @@ static async getOrder(req, res) {
       const orderItems = await OrderModel.getOrderItems(order_id);
 
       res.json({ order, products: orderItems });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  }
+
+  static async getAdminOrderWithProducts(req, res) {
+    try {
+      const { order_id } = req.params;
+      const order = await OrderModel.getOrderById(order_id);
+      const user = await UserModel.getUserById(order.user_id); 
+
+      if (!order) {
+        return res.status(404).json({ error: 'Order not found' });
+      }
+
+      // Get order items (products)
+      const orderItems = await OrderModel.getOrderItems(order_id);
+
+      res.json({ order,user, products: orderItems });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Server error' });

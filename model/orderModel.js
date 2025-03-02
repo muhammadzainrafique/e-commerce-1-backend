@@ -22,7 +22,7 @@ class OrderModel {
   }
 
   static async getAllOrders() {
-    const [rows] = await db.query('SELECT * FROM orders');
+    const [rows] = await db.query('SELECT * FROM orders join users on orders.user_id = users.user_id');
     return rows;
   }
 
